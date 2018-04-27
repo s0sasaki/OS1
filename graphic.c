@@ -26,3 +26,44 @@ void putfonts8_asc(char *vram, int xsize, int x, int y, char c, unsigned char *s
     }
 }
 
+void putfonts8_dec(char *vram, int xsize, int x, int y, char c, unsigned int n){
+    extern char hankaku[4096];
+    int inverse_stack[32];
+    int i;
+    for(i = 0; n != 0; i++){
+        inverse_stack[i] = n%10;
+        n /= 10;
+    }
+    if(i==0){
+        inverse_stack[0] = 0;
+        i = 1;
+    }
+    for(i--; i >= 0; i--){
+        putfont8(vram, xsize, x, y, c, hankaku + (inverse_stack[i] + '0') * 16);
+        x += 8;
+    }
+}
+
+void putfonts8_hex(char *vram, int xsize, int x, int y, char c, unsigned int n){
+    extern char hankaku[4096];
+    int inverse_stack[32];
+    int i;
+    for(i = 0; n != 0; i++){
+        inverse_stack[i] = n%16;
+        n /= 16;
+    }
+    if(i==0){
+        inverse_stack[0] = 0;
+        i = 1;
+    }
+    putfonts8_asc(vram, xsize, x, y, c, "0x");
+    x += 16;
+    for(i--; i >= 0; i--){
+        if(inverse_stack[i] < 10)
+            putfont8(vram, xsize, x, y, c, hankaku + (inverse_stack[i] + '0') * 16);
+        else
+            putfont8(vram, xsize, x, y, c, hankaku + (inverse_stack[i] + 'A' - 10) * 16);
+        x += 8;
+    }
+}
+

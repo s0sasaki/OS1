@@ -39,10 +39,10 @@
 //	int	*m_inodp;	/* pointer to mounted on inode */
 //} mount[NMOUNT];
 int	mpid;			/* generic for unique process id's */
-//char	runin;			/* scheduling flag */
+char	runin;			/* scheduling flag */
 //char	runout;			/* scheduling flag */
-//char	runrun;			/* scheduling flag */
-//char	curpri;			/* more scheduling */
+char	runrun;			/* scheduling flag */
+char	curpri;			/* more scheduling */
 //int	maxmem;			/* actual max memory per process */
 //int	*lks;			/* pointer to clock device */
 //int	rootdev;		/* dev of root see conf.c */

@@ -29,6 +29,8 @@ void Main(void)
     i = fork();
     putfonts8_dec(binfo->vram, binfo->scrnx, 8, 8+32*10, COL8_FFFFFF, i);
 
+    sleep();
+
     io_hlt();
 }
 

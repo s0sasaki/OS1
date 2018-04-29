@@ -6,6 +6,141 @@
 #include "prf.h"
 
 /*
+ * Give up the processor till a wakeup occurs
+ * on chan, at which time the process
+ * enters the scheduling queue at priority pri.
+ * The most important effect of pri is that when
+ * pri<0 a signal cannot disturb the sleep;
+ * if pri>=0 signals will be processed.
+ * Callers of this routine must be prepared for
+ * premature return, and check that the reason for
+ * sleeping has gone away.
+ */
+void sleep(int chan, char pri)
+{
+	//register *rp, s;
+	register struct proc *rp;
+
+	//s = PS->integ;
+	rp = u.u_procp;
+	if(pri >= 0) {
+		//if(issig())
+		//	goto psig;
+		//spl6();
+		rp->p_wchan = chan;
+		rp->p_stat = SWAIT;
+		rp->p_pri = pri;
+		//spl0();
+		if(runin != 0) {
+			runin = 0;
+			//wakeup(&runin);
+		}
+		swtch();
+		//if(issig())
+		//	goto psig;
+	} else {
+		//spl6();
+		rp->p_wchan = chan;
+		rp->p_stat = SSLEEP;
+		rp->p_pri = pri;
+		//spl0();
+		swtch();
+	}
+	//PS->integ = s;
+	return;
+
+	/*
+	 * If priority was low (>=0) and
+	 * there has been a signal,
+	 * execute non-local goto to
+	 * the qsav location.
+	 * (see trap1/trap.c)
+	 */
+//psig:
+//	aretu(u.u_qsav);
+}
+
+/*
+ * This routine is called to reschedule the CPU.
+ * if the calling process is not in RUN state,
+ * arrangements for it to restart must have
+ * been made elsewhere, usually by calling via sleep.
+ */
+int swtch()
+{
+	static struct proc *p;
+	register int i, n;
+	register struct proc *rp;
+
+	if(p == NULL)
+		p = &proc[0];
+	/*
+	 * Remember stack of caller
+	 */
+	//savu(u.u_rsav);
+	/*
+	 * Switch to scheduler's stack
+	 */
+	//retu(proc[0].p_addr);
+
+loop:
+	runrun = 0;
+	rp = p;
+	p = NULL;
+	n = 128;
+	/*
+	 * Search for highest-priority runnable process
+	 */
+	i = NPROC;
+	do {
+		rp++;
+		if(rp >= &proc[NPROC])
+			rp = &proc[0];
+		if(rp->p_stat==SRUN && (rp->p_flag&SLOAD)!=0) {
+			if(rp->p_pri < n) {
+				p = rp;
+				n = rp->p_pri;
+			}
+		}
+	} while(--i);
+	/*
+	 * If no process is runnable, idle.
+	 */
+	if(p == NULL) {
+		p = rp;
+		//idle();
+		goto loop;
+	}
+	rp = p;
+	curpri = n;
+	/*
+	 * Switch to stack of the new process and set up
+	 * his segmentation registers.
+	 */
+	//retu(rp->p_addr);
+	//sureg();
+	/*
+	 * If the new process paused because it was
+	 * swapped out, set the stack level to the last call
+	 * to savu(u_ssav).  This means that the return
+	 * which is executed immediately after the call to aretu
+	 * actually returns from the last routine which did
+	 * the savu.
+	 *
+	 * You are not expected to understand this.
+	 */
+	if(rp->p_flag&SSWAP) {
+		rp->p_flag &= ~SSWAP;
+		//aretu(u.u_ssav);
+	}
+	/*
+	 * The value returned here has many subtle implications.
+	 * See the newproc comments.
+	 */
+	return(1);
+}
+
+/*
  * Create a new process-- the internal version of
  * sys fork.
  * It returns 1 in the new process.

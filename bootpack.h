@@ -1,3 +1,7 @@
+#ifndef BOOTPACK_H
+#define BOOTPACK_H
+
+#include "system.h"
 
 struct BOOTINFO {
   char cyls;
@@ -32,3 +36,4 @@ void putfonts8_asc(char *, int, int, int, char, unsigned char *);
 #define COL8_008484 14
 #define COL8_848484 15
 
+#endif

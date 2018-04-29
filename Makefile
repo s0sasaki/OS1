@@ -1,4 +1,4 @@
-objs = bootpack.o func.o graphic.o font.o malloc.o
+objs = bootpack.o func.o graphic.o font.o malloc.o sys1.o slp.o prf.o
 
 img = sys.img
 

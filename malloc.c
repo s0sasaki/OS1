@@ -1,4 +1,4 @@
-#include "bootpack.h"
+#include "malloc.h"
 
 void *smalloc(struct map *mp, unsigned int size)
 {

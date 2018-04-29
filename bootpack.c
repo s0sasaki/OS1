@@ -1,3 +1,5 @@
+#include "param.h"
+#include "malloc.h"
 #include "bootpack.h"
 
 void Main(void)
@@ -18,11 +20,14 @@ void Main(void)
     void *p, *q;
     int i;
     for(i=0; i<100; i++)
-        mfree(coremap, 64, 0x00320000 + i * 64);
+        mfree(coremap, 64, (void *)0x00320000 + i * 64);
     p = smalloc(coremap, 8);
     q = smalloc(coremap, 64);
     putfonts8_hex(binfo->vram, binfo->scrnx, 8, 8+32*8, COL8_FFFFFF, p);
     putfonts8_hex(binfo->vram, binfo->scrnx, 8, 8+32*9, COL8_FFFFFF, q);
+
+    i = fork();
+    putfonts8_dec(binfo->vram, binfo->scrnx, 8, 8+32*10, COL8_FFFFFF, i);
 
     io_hlt();
 }

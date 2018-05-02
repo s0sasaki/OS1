@@ -19,10 +19,10 @@ struct	proc
 	int	p_ttyp;		
 	int	p_pid;		
 	int	p_ppid;		
-	int	p_addr;		
+	void *p_addr;		
 	int	p_size;		
 	int	p_wchan;	
-	int	*p_textp;	
+	struct text	*p_textp;	
 } proc[NPROC];
 
 /* stat codes */

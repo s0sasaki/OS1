@@ -1,5 +1,7 @@
 #include "param.h"
+#include "text.h"
 #include "proc.h"
+#include "file.h"
 #include "user.h"
 #include "malloc.h"
 #include "systm.h"
@@ -155,11 +157,14 @@ loop:
  */
 int newproc()
 {
-	int a1, a2;
+	void *a1, *a2;
 	struct proc *p, *up;
 	register struct proc *rpp;
 	//register *rip, n;
 	register struct proc *rip;
+    struct file *pfile1;
+    struct file *pfile2;
+    struct text *ptext;
     unsigned int n;
 
 	p = NULL;
@@ -187,7 +192,6 @@ retry:
 	/*
 	 * make proc entry for new proc
 	 */
-
 	rip = u.u_procp;
 	up = rip;
 	rpp->p_stat = SRUN;
@@ -204,13 +208,13 @@ retry:
 	 * make duplicate entries
 	 * where needed
 	 */
-	//for(rip = &u.u_ofile[0]; rip < &u.u_ofile[NOFILE];)
-	//	if((rpp = *rip++) != NULL)
-	//		rpp->f_count++;
-	//if((rpp=up->p_textp) != NULL) {
-	//	rpp->x_count++;
-	//	rpp->x_ccount++;
-	//}
+	for(pfile1 = u.u_ofile[0]; pfile1 < u.u_ofile[NOFILE];)
+		if((pfile2 = pfile1++) != NULL)
+			pfile2->f_count++;
+	if((ptext=up->p_textp) != NULL) {
+		ptext->x_count++;
+		ptext->x_ccount++;
+	}
 	//u.u_cdir->i_count++;
 
 	/*
@@ -219,13 +223,13 @@ retry:
 	 * created (by copying) it will look right.
 	 */
 	//savu(u.u_rsav);
-	//rpp = p;
-	//u.u_procp = rpp;
-	//rip = up;
-	//n = rip->p_size;
-	//a1 = rip->p_addr;
-	//rpp->p_size = n;
-	//a2 = malloc(coremap, n);
+	rpp = p;
+	u.u_procp = rpp;
+	rip = up;
+	n = rip->p_size;
+	a1 = rip->p_addr;
+	rpp->p_size = n;
+	a2 = smalloc(coremap, n);
 
 	/*
 	 * If there is not enough core for the
@@ -240,15 +244,19 @@ retry:
 	//	rpp->p_flag =| SSWAP;
 	//	rip->p_stat = SRUN;
 	//} else {
+#include "bootpack.h"
+    struct BOOTINFO *binfo = (struct BOOTINFO *)ADR_BOOTINFO;
+    putfonts8_hex(binfo->vram, binfo->scrnx, 8, 8+32*11, COL8_FFFFFF, a1);
+    putfonts8_hex(binfo->vram, binfo->scrnx, 8, 8+32*12, COL8_FFFFFF, a2);
 
 	/*
 	 * There is core, so just copy.
 	 */
-	//	rpp->p_addr = a2;
-	//	while(n--)
-	//		copyseg(a1++, a2++);
+	    rpp->p_addr = a2;
+	    while(n--)
+	    	copyseg(a1++, a2++);
 	//}
-	//u.u_procp = rip;
+	u.u_procp = rip;
 	return(0);
 }
 

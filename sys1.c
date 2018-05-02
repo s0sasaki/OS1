@@ -1,5 +1,7 @@
 #include "param.h"
+#include "text.h"
 #include "proc.h"
+#include "file.h"
 #include "user.h"
 #include "malloc.h"
 #include "reg.h"

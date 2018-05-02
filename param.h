@@ -5,7 +5,7 @@
 //
 //#define	NBUF	15		/* size of buffer cache */
 //#define	NINODE	100		/* number of in core inodes */
-//#define	NFILE	100		/* number of in core file structures */
+#define	NFILE	100		/* number of in core file structures */
 //#define	NMOUNT	5		/* number of mountable file systems */
 //#define	NEXEC	3		/* number of simultaneous exec's */
 //#define	MAXMEM	(64*32)		/* max core per process - first # is Kw */
@@ -17,7 +17,7 @@
 //#define	SMAPSIZ	100		/* size of swap allocation area */
 //#define	NCALL	20		/* max simultaneous time callouts */
 #define	NPROC	50		/* max number of processes */
-//#define	NTEXT	40		/* max number of pure texts */
+#define	NTEXT	40		/* max number of pure texts */
 //#define	NCLIST	100		/* max total clist size */
 //#define	HZ	60		/* Ticks/second of the clock */
 //

@@ -5,6 +5,7 @@
 // */
 //char	canonb[CANBSIZ];	/* buffer for erase and kill (#@) */
 //int	coremap[CMAPSIZ];	/* space for core allocation */
+struct map coremap[CMAPSIZ];
 //int	swapmap[SMAPSIZ];	/* space for swap allocation */
 //int	*rootdir;		/* pointer to inode of root directory */
 //int	cputype;		/* type of cpu =40, 45, or 70 */
